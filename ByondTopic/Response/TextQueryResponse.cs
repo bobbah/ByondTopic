@@ -6,15 +6,24 @@ using System.Web;
 
 namespace ByondTopic.Response
 {
+    /// <summary>
+    /// Contains an ASCII response from a BYOND world topic query
+    /// </summary>
     public class TextQueryResponse : QueryResponse
     {
         public override ResponseType ResponseType => ResponseType.ASCII;
+        /// <summary>
+        /// The text content of the response
+        /// </summary>
         public string Response { get; }
+        /// <summary>
+        /// Attempts to convert the text content to a dictionary
+        /// </summary>
         public Dictionary<string, string> AsDictionary => ConvertToDictionary();
 
         internal TextQueryResponse(Stream raw, int dataLength)
         {
-            var binRdr = new BinaryReader(raw);
+            using var binRdr = new BinaryReader(raw);
             Response = Encoding.ASCII.GetString(binRdr.ReadBytes(dataLength));
         }
 

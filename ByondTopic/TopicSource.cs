@@ -26,7 +26,7 @@ namespace ByondTopic
         {
             // Create request
             using var memStream = new MemoryStream();
-            var binWtr = new BinaryWriter(memStream);
+            using var binWtr = new BinaryWriter(memStream);
             binWtr.Write((byte)0x00);
             binWtr.Write((byte)0x83);
             binWtr.Write(ReverseBytes((ushort)(command.Length + 6)));
@@ -43,18 +43,33 @@ namespace ByondTopic
             stream.Write(memStream.GetBuffer(), 0, (int)binWtr.BaseStream.Length);
 
             // Validate response
-            var binRdr = new BinaryReader(stream);
-            if (binRdr.BaseStream.Length < 2)
+            using var binRdr = new BinaryReader(stream);
+            try
             {
-                throw new InvalidResponseException($"Invalid response, returned too few bytes ({binRdr.BaseStream.Length})");
+                if (binRdr.ReadByte() != 0x00 || binRdr.ReadByte() != 0x83) // invalid format
+                {
+                    throw new InvalidResponseException("Invalid response, cannot determine response type from first two bytes.");
+                }
             }
-            else if (binRdr.ReadByte() != 0x00 || binRdr.ReadByte() != 0x83) // invalid format
+            catch (EndOfStreamException ex)
             {
-                throw new InvalidResponseException("Invalid response, cannot determine response type from first two bytes.");
+                throw new InvalidResponseException("Invalid response, response ended before it was possible to determine response type.", ex);
+            }
+            catch (IOException ex)
+            {
+                if (ex.InnerException is SocketException socketEx && socketEx.SocketErrorCode == SocketError.ConnectionReset)
+                {
+                    throw new InvalidResponseException("Invalid response, server forcibly closed the connection. This was likely due to an invalid command.", ex);
+                }
+                else
+                {
+                    throw ex;
+                }
             }
 
-            // Determine response size
+            // Determine response size, remove trailing null
             ushort responseSize = ReverseBytes(binRdr.ReadUInt16());
+            responseSize -= 2;
 
             // Determine response type
             ResponseType responseType = ResponseType.Unknown;
