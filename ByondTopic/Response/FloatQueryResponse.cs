@@ -18,5 +18,10 @@ namespace ByondTopic.Response
             using var binRdr = new BinaryReader(raw);
             Response = binRdr.ReadSingle();
         }
+
+        public override string ToString()
+        {
+            return Response.ToString();
+        }
     }
 }

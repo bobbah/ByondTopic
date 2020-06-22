@@ -12,9 +12,9 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>BYOND;topic;melonmesa;space station 13;ss13;tgstation</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.1.0</Version>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <PackageReleaseNotes>Added support for float responses, improved error handling and response type handling.</PackageReleaseNotes>
+    <Version>1.1.1</Version>
+    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <PackageReleaseNotes>Added ToString override for FloatQueryResponse</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
