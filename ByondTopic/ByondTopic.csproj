@@ -12,6 +12,9 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>BYOND;topic;melonmesa</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <PackageReleaseNotes>Added support for float responses, improved error handling and response type handling.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
