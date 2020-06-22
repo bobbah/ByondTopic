@@ -24,7 +24,7 @@ Or
 using ByondTopic;
 < ... >
 var topic = new TopicSource("byond.paradisestation.org", 6666);
-var queryResponse = topic.QueryJson<Dictionary<string, Dictionary<string>>>("manifest");
+var queryResponse = topic.QueryJson<Dictionary<string, Dictionary<string, string>>>("manifest");
 ```
 
 Note that the QueryJson method is just a convenient wrapper for deserializing returned JSON using System.Text.Json.
