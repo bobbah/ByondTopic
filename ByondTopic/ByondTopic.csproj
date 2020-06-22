@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Title>BYONDTopic</Title>
+    <Authors>Bobbahbrown &amp; FailMelon</Authors>
+    <Company>MelonMesa</Company>
+    <Description>A .NET standard 2.1 package for interacting with BYOND servers VIA world topic calls</Description>
+    <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/bobbahbrown/byondtopic</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/bobbahbrown/byondtopic</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>BYOND;topic;melonmesa</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="4.7.2" />
+  </ItemGroup>
+
+</Project>
