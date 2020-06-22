@@ -1,24 +1,27 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 
-namespace ByondTopic
+namespace ByondTopic.Response
 {
-    public class QueryResponse
+    public class TextQueryResponse : QueryResponse
     {
-        private string Raw { get; }
+        public override ResponseType ResponseType => ResponseType.ASCII;
+        public string Response { get; }
         public Dictionary<string, string> AsDictionary => ConvertToDictionary();
 
-
-        internal QueryResponse(string raw)
+        internal TextQueryResponse(Stream raw, int dataLength)
         {
-            Raw = raw;
+            var binRdr = new BinaryReader(raw);
+            Response = Encoding.ASCII.GetString(binRdr.ReadBytes(dataLength));
         }
 
         private Dictionary<string, string> ConvertToDictionary()
         {
-            var qs = HttpUtility.ParseQueryString(HttpUtility.HtmlDecode(Raw.Substring(5)));
-            return HttpUtility.ParseQueryString(Raw)
+            var qs = HttpUtility.ParseQueryString(Response);
+            return qs
                 .AllKeys
                 .Aggregate(new Dictionary<string, string>(), (Dictionary<string, string> seed, string key) =>
                 {
@@ -33,7 +36,7 @@ namespace ByondTopic
 
         public override string ToString()
         {
-            return Raw;
+            return Response;
         }
     }
 }
