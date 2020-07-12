@@ -39,16 +39,8 @@ namespace ByondTopic
             binWtr.Write((byte)0x00);
 
             // Write to stream / Send to server
-            NetworkStream stream = null;
-            try
-            {
-                using var client = new TcpClient(Server, Port);
-                stream = client.GetStream();
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidResponseException("Invalid response, unable to make connection to server. See inner exception for details.", ex);
-            }
+            using var client = GetClient();
+            var stream = client.GetStream();
             stream.Write(memStream.GetBuffer(), 0, (int)binWtr.BaseStream.Length);
 
             // Validate response
@@ -130,6 +122,23 @@ namespace ByondTopic
         internal static ushort ReverseBytes(ushort value)
         {
             return (ushort)((value & 0xFFU) << 8 | (value & 0xFF00U) >> 8);
+        }
+
+        /// <summary>
+        /// Attempts to get the TcpClient for this TopicSource, will throw an exception if the server cannot
+        /// be connected to.
+        /// </summary>
+        /// <returns>The TcpClient for this TopicSource if successfully connected to</returns>
+        private TcpClient GetClient()
+        {
+            try
+            {
+                return new TcpClient(Server, Port);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidResponseException("Invalid response, unable to make connection to server. See inner exception for details.", ex);
+            }
         }
     }
 }
