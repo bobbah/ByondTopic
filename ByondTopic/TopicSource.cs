@@ -1,4 +1,5 @@
 ﻿using ByondTopic.Response;
+using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -38,8 +39,16 @@ namespace ByondTopic
             binWtr.Write((byte)0x00);
 
             // Write to stream / Send to server
-            using var client = new TcpClient(Server, Port);
-            NetworkStream stream = client.GetStream();
+            NetworkStream stream = null;
+            try
+            {
+                using var client = new TcpClient(Server, Port);
+                stream = client.GetStream();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidResponseException("Invalid response, unable to make connection to server. See inner exception for details.", ex);
+            }
             stream.Write(memStream.GetBuffer(), 0, (int)binWtr.BaseStream.Length);
 
             // Validate response
@@ -67,26 +76,22 @@ namespace ByondTopic
                 }
             }
 
-            // Determine response size, remove trailing null
+            // Determine response size
             ushort responseSize = ReverseBytes(binRdr.ReadUInt16());
-            responseSize -= 2;
 
             // Determine response type
-            ResponseType responseType = ResponseType.Unknown;
-            switch (binRdr.ReadByte())
+            byte responseType = binRdr.ReadByte();
+            switch (responseType)
             {
+                case 0x00:
+                    return new NullQueryResponse();
                 case 0x2a:
-                    responseType = ResponseType.Float;
-                    break;
+                    return new FloatQueryResponse(stream);
                 case 0x06:
-                    responseType = ResponseType.ASCII;
-                    break;
+                    return new TextQueryResponse(stream, responseSize);
+                default:
+                    throw new InvalidResponseException($"Invalid response, unable to determine response type [{responseType}]");
             }
-
-            // Create response object
-            return responseType == ResponseType.Float 
-                ? (QueryResponse)new FloatQueryResponse(stream) 
-                : new TextQueryResponse(stream, responseSize);
         }
 
         /// <summary>

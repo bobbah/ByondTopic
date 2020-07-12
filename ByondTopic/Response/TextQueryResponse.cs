@@ -24,7 +24,7 @@ namespace ByondTopic.Response
         internal TextQueryResponse(Stream raw, int dataLength)
         {
             using var binRdr = new BinaryReader(raw);
-            Response = Encoding.ASCII.GetString(binRdr.ReadBytes(dataLength));
+            Response = Encoding.UTF8.GetString(binRdr.ReadBytes(dataLength - 2));
         }
 
         private Dictionary<string, string> ConvertToDictionary()

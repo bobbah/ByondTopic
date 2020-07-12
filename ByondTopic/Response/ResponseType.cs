@@ -8,6 +8,7 @@
     public enum ResponseType
     {
         Unknown,
+        Null,
         Float,
         ASCII
     }
